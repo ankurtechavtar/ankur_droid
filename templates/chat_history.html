@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat History</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .chat-container { max-width: 600px; margin: auto; }
+        .user-message { background-color: #f1f1f1; padding: 10px; border-radius: 5px; margin: 5px 0; }
+        .bot-message { background-color: #d1e7fd; padding: 10px; border-radius: 5px; margin: 5px 0; }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <h2>Chat History</h2>
+        <div id="chat-messages">
+            {% for message in messages %}
+                <div class="user-message"><strong>User:</strong> {{ message.user_message }}</div>
+                <div class="bot-message"><strong>Bot:</strong> {{ message.bot_response }}</div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+
+<script>
+    function fetchChatHistory() {
+        fetch('/chat-history/', {
+            headers: { "X-Requested-With": "XMLHttpRequest" }  
+        })
+        .then(response => response.json())
+        .then(data => {
+            let chatMessages = document.getElementById('chat-messages');
+            chatMessages.innerHTML = ''; 
+    
+            data.messages.forEach(msg => {
+                chatMessages.innerHTML += `<div class="user-message"><strong>User:</strong> ${msg.user_message}</div>`;
+                chatMessages.innerHTML += `<div class="bot-message"><strong>Bot:</strong> ${msg.bot_response}</div>`;
+            });
+        })
+        .catch(error => console.error('Error fetching chat history:', error));
+    }
+    
+   
+    setInterval(fetchChatHistory, 5000);
+    
+</script>
+
+</html>
